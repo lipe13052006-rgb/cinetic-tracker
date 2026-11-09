@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en" data-page="home">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kinetic: Gym and Diet Tracker</title>
+  <meta name="description" content="Track your lifts and your calories in one place. See your strength and weight evolve, and compare your progress to an ideal curve for your body.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <a class="brand" href="index.html"><span class="brand-mark">K</span><span class="name">Kinetic</span></a>
+      <div class="nav-right">
+        <div class="tabs">
+          <a href="gym.html">Gym</a>
+          <a href="diet.html">Diet</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero hero-home">
+    <div class="container">
+      <span class="eyebrow">Gym + diet tracker</span>
+      <h1>Train hard. Eat smart. See it all add up.</h1>
+      <p class="lead">One place to log your workouts, your calories and your daily weight. Kinetic turns them into clear charts and compares your progress with an ideal curve for your body.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="gym.html">Start with the gym</a>
+        <a class="btn btn-ghost" href="diet.html">Start with the diet</a>
+      </div>
+      <ul class="trust">
+        <li>Free to try</li>
+        <li>kg or lb</li>
+        <li>Your data stays in your browser</li>
+      </ul>
+    </div>
+  </header>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>What your progress looks like</h2>
+          <p>These charts use sample data. Yours fill in as you log.</p>
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="card preview">
+          <div class="preview-head"><h3>Gym: bench press</h3><span class="badge">Strength</span></div>
+          <div class="mini-chart"><canvas id="home-gym" aria-label="Sample chart: bench press estimated one-rep max rising above the ideal line"></canvas></div>
+          <div class="legend">
+            <span style="--c: var(--text)">You</span>
+            <span class="dashed" style="--c: var(--ideal)">Ideal for your bodyweight</span>
+          </div>
+        </div>
+        <div class="card preview preview-diet">
+          <div class="preview-head"><h3>Diet: weight</h3><span class="badge">Weight</span></div>
+          <div class="mini-chart"><canvas id="home-diet" aria-label="Sample chart: measured weight falling alongside the weight predicted from calories"></canvas></div>
+          <div class="legend">
+            <span style="--c: var(--green)">Measured</span>
+            <span class="dashed" style="--c: var(--ideal)">Predicted from calories</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>How it works</h2>
+          <p>Three steps, and only the first one is a one-off.</p>
+        </div>
+      </div>
+      <div class="grid grid-3">
+        <div class="card step">
+          <span class="step-num">1</span>
+          <h3>Tell us about you, once</h3>
+          <p>Your sex and height. That's all we ask, and we never ask again.</p>
+        </div>
+        <div class="card step">
+          <span class="step-num">2</span>
+          <h3>Log your day</h3>
+          <p>After the gym, add the session with every exercise. Each day, add calories eaten, calories burned and one weigh-in.</p>
+        </div>
+        <div class="card step">
+          <span class="step-num">3</span>
+          <h3>Watch it evolve</h3>
+          <p>Your lifts and your weight get their own charts, each next to a line showing where you'd typically be.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="grid grid-2">
+        <div class="card split">
+          <span class="eyebrow">Gym</span>
+          <h3>Every set, every lift</h3>
+          <ul class="checks">
+            <li>Log full sessions with as many exercises as you did</li>
+            <li>Add your own exercises, not just the big four</li>
+            <li>Weights in kg or lb, switch any time</li>
+            <li>An estimated one-rep max, so heavy and light sets compare fairly</li>
+            <li>An ideal line for your bodyweight on every main lift</li>
+          </ul>
+          <a class="btn btn-primary" href="gym.html">Open the gym tracker</a>
+        </div>
+        <div class="card split split-diet">
+          <span class="eyebrow">Diet</span>
+          <h3>Calories in, weight out</h3>
+          <ul class="checks">
+            <li>Log calories eaten and burned each day</li>
+            <li>One weigh-in a day, shared with the gym page</li>
+            <li>Your daily surplus or deficit, worked out for you</li>
+            <li>A weight forecast next to what the scale says</li>
+            <li>Your weekly pace: losing, gaining or holding</li>
+          </ul>
+          <a class="btn btn-primary" href="diet.html">Open the diet tracker</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Where the ideal lines come from</h2>
+          <p>They're simple, published benchmarks. Treat them as a guide, not a verdict.</p>
+        </div>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Strength: bodyweight multiples</h3>
+          <p>Strength tables express a good lift as a multiple of your bodyweight. A typical beginner man benches about half his bodyweight, and an intermediate lifter about 1.25 times. The ideal line starts at the beginner level for your weight and moves toward intermediate over roughly a year of steady training. Women's standards are lower, and we use those when your profile says so.</p>
+          <p class="hint">Sources: <a href="https://arvo.guru/resources/strength-standards">arvo.guru</a>, <a href="https://coachway.io/tools/strength-standards-calculator/">Coachway</a>, <a href="https://strengthlevel.com/strength-standards/male/kg">Strength Level</a>. They disagree on exact numbers, so ours are middle-of-the-road.</p>
+        </div>
+        <div class="card">
+          <h3>Weight: the calorie rule of thumb</h3>
+          <p>About 7,700 kcal of surplus or deficit is roughly 1 kg of body weight. We add up your daily balance from your first weigh-in to draw the predicted line. If the real line drifts away from it, your logged calories are probably off, which is useful to know.</p>
+          <p class="hint">It's an average. Water, salt and muscle mean your weight won't follow it exactly day to day.</p>
+        </div>
+      </div>
+      <p class="note">Kinetic is a tracking tool, not medical advice. Check with a professional before big changes to your training or diet.</p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container narrow">
+      <div class="section-head"><div><h2>Questions</h2></div></div>
+      <details class="card faq">
+        <summary>Do I need an account?</summary>
+        <p>Not for this version. Everything is saved in your own browser, and nothing is sent anywhere.</p>
+      </details>
+      <details class="card faq">
+        <summary>What happens if I clear my browser data?</summary>
+        <p>Your logs go with it, because they live only in the browser for now. Accounts that keep your data across devices are the next thing planned.</p>
+      </details>
+      <details class="card faq">
+        <summary>Can I use pounds?</summary>
+        <p>Yes. Switch between kg and lb on either page, and every number converts.</p>
+      </details>
+      <details class="card faq">
+        <summary>What exercises can I track?</summary>
+        <p>Bench press, squat, deadlift and overhead press come with an ideal line. You can also add any other exercise by name, and it gets its own chart.</p>
+      </details>
+      <details class="card faq">
+        <summary>Why is my weight asked on the diet page only?</summary>
+        <p>You weigh in once a day, so it lives in one place. The gym page reads your latest weight to build your ideal lines.</p>
+      </details>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="card cta">
+        <h2>Ready to see your progress?</h2>
+        <p>Pick a side to start. It takes a minute to set up, and the other page is one tap away.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a class="btn btn-primary" href="gym.html">Start tracking</a>
+          <a class="btn btn-ghost" href="diet.html">Track my diet</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <span>&copy; 2026 Kinetic</span>
+      <span>Demo landing page. Data stays in your browser.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="common.js"></script>
+  <script src="landing.js"></script>
+</body>
+</html>

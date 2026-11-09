@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" data-page="diet">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kinetic Diet Tracker</title>
+  <meta name="description" content="Track calories eaten and burned every day and watch your bodyweight trend against what your calorie balance predicts.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <a class="brand" href="index.html"><span class="brand-mark">K</span><span class="name">Kinetic</span></a>
+      <div class="nav-right">
+        <div class="tabs">
+          <a href="gym.html">Gym</a>
+          <a href="diet.html" aria-current="page">Diet</a>
+        </div>
+        <button class="btn btn-ghost btn-sm" type="button" data-edit-profile>Profile</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="eyebrow">Diet tracker</span>
+      <h1>Calories in, calories out, progress you can see.</h1>
+      <p class="lead">Log what you eat and what you burn each day. Kinetic turns the balance into a weight forecast and puts it next to what the scale actually says.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#log">Log today</a>
+        <a class="btn btn-ghost" href="#progress">See the demo chart</a>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="container grid grid-3">
+      <div class="card feature">
+        <div class="icon">&#127869;</div>
+        <h3>Daily calorie log</h3>
+        <p>Enter calories eaten and calories burned. Your daily balance is worked out for you.</p>
+      </div>
+      <div class="card feature">
+        <div class="icon">&#9878;</div>
+        <h3>One weigh-in a day</h3>
+        <p>Log your weight once here. Day-to-day readings jump around, so a forecast from your calorie balance shows the real direction.</p>
+      </div>
+      <div class="card feature">
+        <div class="icon">&#9201;</div>
+        <h3>Weekly view</h3>
+        <p>Bars for each day's intake and burn make the surplus and deficit days easy to spot.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="progress">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Your progress</h2>
+          <p>Demo data is preloaded. Log a day to see the charts update.</p>
+        </div>
+        <div class="segmented" role="group" aria-label="Units">
+          <button type="button" data-unit="kg" aria-pressed="true">kg</button>
+          <button type="button" data-unit="lb" aria-pressed="false">lb</button>
+        </div>
+      </div>
+
+      <div class="grid grid-4" id="stats" style="margin-bottom:16px"></div>
+
+      <div class="layout">
+        <form class="card" id="log">
+          <h3>Log a day</h3>
+          <label>Date <input type="date" name="date" required></label>
+          <label>Calories eaten (kcal)
+            <input type="number" name="intake" min="0" max="10000" required placeholder="e.g. 2200">
+          </label>
+          <label>Calories burned (kcal)
+            <input type="number" name="burn" min="0" max="10000" required placeholder="e.g. 2600">
+          </label>
+          <p class="hint" style="margin:-4px 0 10px">Total burn for the day: resting metabolism plus activity and workouts.</p>
+          <label><span id="w-label">Today's weight (kg)</span>
+            <input type="number" name="weight" min="20" step="0.1" placeholder="e.g. 82.4">
+          </label>
+          <p class="hint" style="margin:-4px 0 10px">Weigh in once a day. The gym page uses your latest weight for its benchmark.</p>
+          <button class="btn btn-primary" type="submit" style="width:100%">Add day</button>
+          <button class="btn btn-ghost" type="button" id="reset" style="width:100%;margin-top:8px">Reset demo data</button>
+        </form>
+
+        <div class="grid">
+          <div class="card">
+            <div class="chart-toolbar">
+              <h3 style="margin:0">Weight evolution</h3>
+              <span class="badge" id="trend-badge"></span>
+            </div>
+            <div class="chart-box"><canvas id="weight-chart" aria-label="Measured weight versus weight predicted from calorie balance"></canvas></div>
+            <div class="legend">
+              <span style="--c: var(--accent)">Measured weight</span>
+              <span class="dashed" style="--c: var(--ideal)">Predicted from calorie balance</span>
+            </div>
+            <p class="note">The prediction starts at your first weigh-in and moves about 1 kg for every 7,700 kcal of surplus or deficit. If the two lines drift apart, your logged numbers are probably off.</p>
+          </div>
+
+          <div class="card">
+            <div class="chart-toolbar">
+              <h3 style="margin:0">Calories, last 14 days</h3>
+            </div>
+            <div class="chart-box"><canvas id="cal-chart" aria-label="Calories eaten and burned per day"></canvas></div>
+            <div class="legend">
+              <span style="--c: var(--accent)">Eaten</span>
+              <span style="--c: var(--series-2)">Burned</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="card cta">
+        <h2>Fuel shows up on the bar.</h2>
+        <p>See how your eating lines up with your strength on the gym page.</p>
+        <a class="btn btn-primary" href="gym.html">Go to the gym tracker</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <span>&copy; 2026 Kinetic</span>
+      <span>Demo landing page. Data stays in your browser.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="common.js"></script>
+  <script src="diet.js"></script>
+</body>
+</html>

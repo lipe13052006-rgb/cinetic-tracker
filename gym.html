@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" data-page="gym">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kinetic Gym Tracker</title>
+  <meta name="description" content="Log full training sessions, track your lifts in kg or lb, and compare your progress against the typical strength curve for your body.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <a class="brand" href="index.html"><span class="brand-mark">K</span><span class="name">Kinetic</span></a>
+      <div class="nav-right">
+        <div class="tabs">
+          <a href="gym.html" aria-current="page">Gym</a>
+          <a href="diet.html">Diet</a>
+        </div>
+        <button class="btn btn-ghost btn-sm" type="button" data-edit-profile>Profile</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="eyebrow">Gym tracker</span>
+      <h1>See every kilo you've added.</h1>
+      <p class="lead">Log whole sessions with as many exercises as you did, watch each lift climb on its own chart, and compare it with the typical progress curve for someone your weight.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#log">Log a session</a>
+        <a class="btn btn-ghost" href="#progress">See the demo chart</a>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="container grid grid-3">
+      <div class="card feature">
+        <div class="icon">&#9998;</div>
+        <h3>Log the whole session</h3>
+        <p>Add every exercise you did: sets, reps and weight in kg or lb. Name your own exercises too.</p>
+      </div>
+      <div class="card feature">
+        <div class="icon">&#8599;</div>
+        <h3>Watch each lift</h3>
+        <p>Every set becomes an estimated one-rep max, so heavy triples and lighter sets of ten land on the same chart.</p>
+      </div>
+      <div class="card feature">
+        <div class="icon">&#9678;</div>
+        <h3>Compare to a benchmark</h3>
+        <p>An ideal line shows typical progress for your bodyweight, from beginner toward intermediate.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="progress">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Your progress</h2>
+          <p>Demo data is preloaded. Log a session to see the chart update.</p>
+        </div>
+        <div class="segmented" role="group" aria-label="Units">
+          <button type="button" data-unit="kg" aria-pressed="true">kg</button>
+          <button type="button" data-unit="lb" aria-pressed="false">lb</button>
+        </div>
+      </div>
+
+      <div class="grid grid-4" id="stats" style="margin-bottom:16px"></div>
+
+      <div class="layout">
+        <div class="grid">
+          <div class="card" id="profile-card"></div>
+
+          <form class="card" id="log">
+            <h3>Log a session</h3>
+            <div class="row">
+              <label>Date <input type="date" name="date" required></label>
+              <label>Name (optional) <input type="text" name="name" maxlength="40" placeholder="Push day"></label>
+            </div>
+            <div id="rows"></div>
+            <button class="btn btn-ghost" type="button" id="add-row" style="width:100%;margin-bottom:10px">+ Add exercise</button>
+            <button class="btn btn-primary" type="submit" style="width:100%">Save session</button>
+            <button class="btn btn-ghost" type="button" id="reset" style="width:100%;margin-top:8px">Reset demo data</button>
+          </form>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="chart-toolbar">
+              <div class="segmented" role="group" aria-label="Exercise" id="lift-picker"></div>
+              <span class="badge" id="level-badge"></span>
+            </div>
+            <div class="chart-box"><canvas id="gym-chart" aria-label="Estimated one-rep max over time versus ideal progress"></canvas></div>
+            <div class="legend">
+              <span style="--c: var(--accent)">Your estimated 1RM</span>
+              <span class="dashed" id="ideal-legend" style="--c: var(--ideal)">Ideal progress for your bodyweight</span>
+            </div>
+            <p class="note" id="ideal-note">The ideal line starts at the beginner standard for your bodyweight and approaches the intermediate standard over roughly a year of consistent training. Standards are bodyweight multiples from published strength tables; height doesn't change them much, so it's used for BMI only.</p>
+          </div>
+
+          <div class="card">
+            <h3>Recent sessions</h3>
+            <div id="sessions"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="card cta">
+        <h2>Pair your lifts with your plate.</h2>
+        <p>Strength follows food. Track calories in and out, and your daily weigh-in, on the diet page.</p>
+        <a class="btn btn-primary" href="diet.html">Go to the diet tracker</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <span>&copy; 2026 Kinetic</span>
+      <span>Demo landing page. Data stays in your browser.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="common.js"></script>
+  <script src="gym.js"></script>
+</body>
+</html>
