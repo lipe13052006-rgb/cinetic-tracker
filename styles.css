@@ -216,3 +216,10 @@ html { scroll-behavior: smooth; }
   .mini-chart { height: 200px; }
   .hero-actions .btn { flex: 1 1 100%; }
 }
+
+/* Session templates */
+.template-bar { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
+.tb-label { font-size: .85rem; font-weight: 500; color: var(--muted); }
+.routine-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2px; }
+#routine-msg:empty { display: none; }
+#routine-msg { margin: 8px 0 12px; color: var(--text); }

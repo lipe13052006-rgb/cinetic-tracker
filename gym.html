@@ -76,12 +76,22 @@
 
           <form class="card" id="log">
             <h3>Log a session</h3>
+            <div class="template-bar">
+              <span class="tb-label">Start from</span>
+              <div class="segmented" id="templates" role="group" aria-label="Start from"></div>
+            </div>
+            <p class="hint" id="template-hint"></p>
             <div class="row">
               <label>Date <input type="date" name="date" required></label>
               <label>Name (optional) <input type="text" name="name" maxlength="40" placeholder="Push day"></label>
             </div>
             <div id="rows"></div>
             <button class="btn btn-ghost" type="button" id="add-row" style="width:100%;margin-bottom:10px">+ Add exercise</button>
+            <div class="routine-actions">
+              <button class="btn btn-ghost btn-sm" type="button" id="save-routine">Save as routine</button>
+              <button class="btn btn-ghost btn-sm" type="button" id="delete-routine" hidden>Delete routine</button>
+            </div>
+            <p class="hint" id="routine-msg" aria-live="polite"></p>
             <button class="btn btn-primary" type="submit" style="width:100%">Save session</button>
             <button class="btn btn-ghost" type="button" id="reset" style="width:100%;margin-top:8px">Reset demo data</button>
           </form>

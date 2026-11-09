@@ -9,6 +9,7 @@ const K = {
   weights: "k2-weights",   // { "YYYY-MM-DD": kg }  one weigh-in per day
   diet: "k2-diet",         // [{ date, intake, burn }]
   sessions: "k2-sessions", // [{ id, date, name, exercises: [{ lift, sets, reps, weight }] }]
+  routines: "k2-routines", // [{ id, name, exercises: [{ lift, sets, reps }] }]  saved workout templates
 };
 
 const store = {

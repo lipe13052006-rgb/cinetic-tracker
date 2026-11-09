@@ -28,6 +28,8 @@ const state = {
   unit: getUnit(),
   lift: "bench",
   sessions: loadSessions(),
+  routines: loadRoutines(),
+  template: "last", // "last" | "blank" | a routine id: what the session form starts from
 };
 
 // Epley estimate of a one-rep max.
@@ -237,15 +239,50 @@ function renderAll() {
   renderSessions();
 }
 
-// ---- Session builder ----
+// ---- Routines and the session builder ----
 const rowsEl = document.getElementById("rows");
+const chipsEl = document.getElementById("templates");
+const hintEl = document.getElementById("template-hint");
+const routineMsg = document.getElementById("routine-msg");
+const logForm = document.getElementById("log");
+
+// Three starter routines that match the demo sessions. People can save their own.
+function demoRoutines() {
+  return [
+    { id: "r-push", name: "Push", exercises: [{ lift: "bench", sets: 3, reps: 5 }, { lift: "ohp", sets: 3, reps: 6 }] },
+    { id: "r-legs", name: "Legs", exercises: [{ lift: "squat", sets: 3, reps: 5 }, { lift: "deadlift", sets: 3, reps: 5 }] },
+    { id: "r-full", name: "Full body", exercises: [{ lift: "bench", sets: 3, reps: 8 }, { lift: "squat", sets: 3, reps: 8 }, { lift: "Barbell row", sets: 3, reps: 8 }] },
+  ];
+}
+function loadRoutines() {
+  let r = store.get(K.routines, null);
+  if (!r) { r = demoRoutines(); store.set(K.routines, r); }
+  return r;
+}
+
+const newestFirst = () => [...state.sessions].reverse().sort((a, b) => b.date.localeCompare(a.date));
+
+// The weight you used last time for a lift: in the same kind of session if possible, otherwise anywhere.
+function lastWeight(lift, routineName) {
+  const list = newestFirst();
+  const find = (pred) => {
+    for (const s of list) {
+      if (!pred(s)) continue;
+      const e = s.exercises.find((x) => x.lift === lift);
+      if (e) return e.weight;
+    }
+    return null;
+  };
+  const same = routineName ? find((s) => (s.name || "").toLowerCase() === routineName.toLowerCase()) : null;
+  return same != null ? same : find(() => true);
+}
 
 function refreshRows() {
   const rows = rowsEl.querySelectorAll(".ex-row");
   rows.forEach((r) => { r.querySelector("[data-remove]").disabled = rows.length === 1; });
 }
 
-function addRow() {
+function addRow(data = {}) {
   const row = document.createElement("div");
   row.className = "ex-row";
   row.innerHTML = `
@@ -262,8 +299,79 @@ function addRow() {
       <label>Reps<input type="number" name="reps" min="1" max="30" value="5" required></label>
       <label><span class="wl">Weight (${state.unit})</span><input type="number" name="weight" min="0.5" step="0.5" required></label>
     </div>`;
+  const sel = row.querySelector('[name="lift"]');
+  const custom = row.querySelector('[name="custom"]');
+  if (data.lift) {
+    if (MAIN_LIFTS.includes(data.lift)) sel.value = data.lift;
+    else { sel.value = CUSTOM; custom.hidden = false; custom.required = true; custom.value = data.lift; }
+  }
+  if (data.sets) row.querySelector('[name="sets"]').value = data.sets;
+  if (data.reps) row.querySelector('[name="reps"]').value = data.reps;
+  if (data.weight != null) row.querySelector('[name="weight"]').value = +toUnit(data.weight).toFixed(1);
   rowsEl.appendChild(row);
   refreshRows();
+}
+
+function fillRows(list) {
+  rowsEl.innerHTML = "";
+  (list.length ? list : [{}]).forEach(addRow);
+}
+
+// Read the exercise rows. Weights are returned in kg (or undefined if empty).
+function readRows() {
+  return [...rowsEl.querySelectorAll(".ex-row")].map((r) => {
+    let lift = r.querySelector('[name="lift"]').value;
+    if (lift === CUSTOM) {
+      const name = r.querySelector('[name="custom"]').value.trim();
+      // Typing a main lift's name under "Other" still counts toward that lift.
+      lift = MAIN_LIFTS.find((k) => LIFT_NAMES[k].toLowerCase() === name.toLowerCase()) || name;
+    }
+    const w = parseFloat(r.querySelector('[name="weight"]').value);
+    return {
+      lift,
+      sets: +r.querySelector('[name="sets"]').value,
+      reps: +r.querySelector('[name="reps"]').value,
+      weight: Number.isNaN(w) ? undefined : fromUnit(w),
+    };
+  }).filter((x) => x.lift);
+}
+
+function renderTemplates() {
+  const chips = [
+    { id: "last", label: "Last session" },
+    ...state.routines.map((r) => ({ id: r.id, label: r.name })),
+    { id: "blank", label: "Blank" },
+  ];
+  chipsEl.innerHTML = chips.map((c) => `<button type="button" data-template="${esc(c.id)}" aria-pressed="${c.id === state.template}">${esc(c.label)}</button>`).join("");
+
+  const routine = state.routines.find((r) => r.id === state.template);
+  document.getElementById("delete-routine").hidden = !routine;
+  hintEl.textContent =
+    state.template === "blank" ? "Starting from scratch." :
+    routine ? `Weights are from the last time you did ${routine.name}. Change what's different.` :
+    "Filled in from your last session. Change what's different.";
+}
+
+function applyTemplate(id) {
+  state.template = id;
+  routineMsg.textContent = "";
+  logForm.date.value = isoDate(new Date());
+
+  const routine = state.routines.find((r) => r.id === id);
+  if (id !== "blank" && !routine) state.template = "last";
+
+  if (routine) {
+    fillRows(routine.exercises.map((e) => ({ ...e, weight: lastWeight(e.lift, routine.name) })));
+    logForm.name.value = routine.name;
+  } else if (state.template === "last" && state.sessions.length) {
+    const s = newestFirst()[0];
+    fillRows(s.exercises);
+    logForm.name.value = s.name || "";
+  } else {
+    fillRows([]);
+    logForm.name.value = "";
+  }
+  renderTemplates();
 }
 
 rowsEl.addEventListener("change", (e) => {
@@ -280,46 +388,59 @@ rowsEl.addEventListener("click", (e) => {
   btn.closest(".ex-row").remove();
   refreshRows();
 });
-document.getElementById("add-row").addEventListener("click", addRow);
+document.getElementById("add-row").addEventListener("click", () => addRow());
 
-const logForm = document.getElementById("log");
-function resetForm() {
-  rowsEl.innerHTML = "";
-  addRow();
-  logForm.date.value = isoDate(new Date());
-  logForm.name.value = "";
-}
+chipsEl.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-template]");
+  if (b) applyTemplate(b.dataset.template);
+});
+
+document.getElementById("save-routine").addEventListener("click", () => {
+  const name = logForm.name.value.trim();
+  if (!name) {
+    routineMsg.textContent = "Give the session a name first (like Pull day), then save it as a routine.";
+    logForm.name.focus();
+    return;
+  }
+  const exercises = readRows().map(({ lift, sets, reps }) => ({ lift, sets, reps }));
+  if (!exercises.length) return;
+  // Saving under an existing name updates that routine.
+  let routine = state.routines.find((r) => r.name.toLowerCase() === name.toLowerCase());
+  if (routine) routine.exercises = exercises;
+  else { routine = { id: `r${Date.now()}`, name, exercises }; state.routines.push(routine); }
+  store.set(K.routines, state.routines);
+  state.template = routine.id;
+  renderTemplates();
+  routineMsg.textContent = `Saved routine "${routine.name}". Pick it any time under Start from.`;
+});
+
+document.getElementById("delete-routine").addEventListener("click", () => {
+  state.routines = state.routines.filter((r) => r.id !== state.template);
+  store.set(K.routines, state.routines);
+  applyTemplate("last");
+});
 
 logForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const exercises = [...rowsEl.querySelectorAll(".ex-row")].map((r) => {
-    let lift = r.querySelector('[name="lift"]').value;
-    if (lift === CUSTOM) {
-      const name = r.querySelector('[name="custom"]').value.trim();
-      // Typing a main lift's name under "Other" still counts toward that lift.
-      lift = MAIN_LIFTS.find((k) => LIFT_NAMES[k].toLowerCase() === name.toLowerCase()) || name;
-    }
-    return {
-      lift,
-      sets: +r.querySelector('[name="sets"]').value,
-      reps: +r.querySelector('[name="reps"]').value,
-      weight: fromUnit(parseFloat(r.querySelector('[name="weight"]').value)),
-    };
-  }).filter((x) => x.lift);
+  const exercises = readRows();
   if (!exercises.length) return;
 
   state.sessions.push({ id: String(Date.now()), date: logForm.date.value, name: logForm.name.value.trim(), exercises });
   store.set(K.sessions, state.sessions);
   state.lift = exercises[0].lift;
-  resetForm();
+  // Refill from the same starting point, so next time it already holds today's weights.
+  applyTemplate(state.template);
   renderAll();
 });
 
 // ---- Other events ----
 document.querySelectorAll("[data-unit]").forEach((b) => b.addEventListener("click", () => {
+  // Weights already typed into the form keep their value when the unit changes.
+  const typed = readRows().length ? [...rowsEl.querySelectorAll('[name="weight"]')].map((i) => (i.value === "" ? null : fromUnit(parseFloat(i.value)))) : [];
   state.unit = b.dataset.unit;
   setUnit(state.unit);
   renderAll();
+  rowsEl.querySelectorAll('[name="weight"]').forEach((i, n) => { i.value = typed[n] == null ? "" : +toUnit(typed[n]).toFixed(1); });
 }));
 
 document.getElementById("lift-picker").addEventListener("click", (e) => {
@@ -339,13 +460,16 @@ document.getElementById("sessions").addEventListener("click", (e) => {
 
 document.getElementById("reset").addEventListener("click", () => {
   state.sessions = demoSessions();
+  state.routines = demoRoutines();
   store.set(K.sessions, state.sessions);
+  store.set(K.routines, state.routines);
   state.lift = "bench";
+  applyTemplate("last");
   renderAll();
 });
 
 chartDefaults();
-resetForm();
+applyTemplate("last");
 renderAll();
 onThemeChange(renderChart);
 initProfileDialog(renderAll);
